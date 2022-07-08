@@ -4,16 +4,37 @@
 
 RCT_EXPORT_MODULE()
 
-// Example method
-// See // https://reactnative.dev/docs/native-modules-ios
-RCT_REMAP_METHOD(multiply,
-                 multiplyWithA:(nonnull NSNumber*)a withB:(nonnull NSNumber*)b
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
++ (BOOL)requiresMainQueueSetup
 {
-  NSNumber *result = @([a floatValue] * [b floatValue]);
+    return YES;
+}
 
-  resolve(result);
+
+- (NSMutableArray *)toLanguageTags:(NSArray *)languages {
+  NSMutableArray *languageTags = [NSMutableArray array];
+
+  for (id l in languages) {
+    [languageTags addObject:[l stringByReplacingOccurrencesOfString:@"_" withString:@"-"]];
+  }
+
+  return languageTags;
+}
+
+- (NSArray *)getPreferredLanguages {
+  NSArray *preferredLanguages = [NSLocale preferredLanguages];
+
+  return [[[UIDevice currentDevice] systemVersion] floatValue] >= 9
+    ? preferredLanguages
+    : [self toLanguageTags:preferredLanguages];
+}
+
+- (NSDictionary *)constantsToExport {
+  return @{ @"languages": [self getPreferredLanguages] };
+}
+
+RCT_EXPORT_METHOD(getLanguages:(RCTPromiseResolveBlock)resolve
+                  rejecter:(__unused RCTPromiseRejectBlock)reject) {
+  resolve([self getPreferredLanguages]);
 }
 
 @end
