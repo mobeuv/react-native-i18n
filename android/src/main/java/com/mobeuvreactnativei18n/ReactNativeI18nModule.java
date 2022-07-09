@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-@ReactModule(name = ReactNativeI18nModule.NAME)
 public class ReactNativeI18nModule extends ReactContextBaseJavaModule {
     public static final String NAME = "ReactNativeI18n";
 
